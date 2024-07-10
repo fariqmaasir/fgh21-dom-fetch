@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Survey Form</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+      form {
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+      input[type="text"],
+      input[type="radio"],
+      input[type="checkbox"] {
+        margin-bottom: 10px;
+      }
+      input[type="text"] {
+        width: calc(100% - 20px);
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-top: 5px;
+      }
+      input[type="radio"],
+      input[type="checkbox"] {
+        margin-right: 10px;
+      }
+      .radio-group,
+      .checkbox-group {
+        display: flex;
+        flex-direction: column;
+      }
+      .radio-group label,
+      .checkbox-group label {
+        font-weight: normal;
+      }
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+      button:hover {
+        background-color: #0056b3;
+      }
+      table {
+        font-family: arial, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      td,
+      th {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="form">
+      <label>Siapa Nama Anda?</label>
+      <input name="name" type="text" />
+
+      <label>Berapa Umur Anda?</label>
+      <input name="age" type="text" />
+
+      <label>Apa Jenis Kelamin Anda?</label>
+      <div class="radio-group">
+        <div>
+          <input
+            type="radio"
+            value="Laki-laki"
+            id="inputGenderMale"
+            name="gender"
+          />
+          <label for="inputGenderMale">Laki-laki</label>
+        </div>
+        <div>
+          <input
+            type="radio"
+            value="Perempuan"
+            id="inputGenderFeMale"
+            name="gender"
+          />
+          <label for="inputGenderFeMale">Perempuan</label>
+        </div>
+      </div>
+
+      <label>Apakah Anda Perokok?</label>
+      <div class="radio-group">
+        <div>
+          <input type="radio" value="Ya" id="inputSmokeYes" name="smoke" />
+          <label for="inputSmokeYes">Ya</label>
+        </div>
+        <div>
+          <input type="radio" value="Tidak" id="inputSmokeNo" name="smoke" />
+          <label for="inputSmokeNo">Tidak</label>
+        </div>
+      </div>
+
+      <label>Jika anda perokok, rokok apa yang anda pernah coba?</label>
+      <div class="checkbox-group">
+        <div>
+          <input
+            type="checkbox"
+            value="Gudang Garam Filter"
+            id="inputSmoke1"
+            name="cigar"
+          />
+          <label for="inputSmoke1">Gudang Garam Filter</label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            value="Lucky Strike"
+            id="inputSmoke2"
+            name="cigar"
+          />
+          <label for="inputSmoke2">Lucky Strike</label>
+        </div>
+        <div>
+          <input
+            type="checkbox"
+            value="Marlboro"
+            id="inputSmoke3"
+            name="cigar"
+          />
+          <label for="inputSmoke3">Marlboro</label>
+        </div>
+        <div>
+          <input type="checkbox" value="Esse" id="inputSmoke4" name="cigar" />
+          <label for="inputSmoke4">Esse</label>
+        </div>
+      </div>
+      <button type="submit">Submit</button>
+    </form>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Gender</th>
+          <th>Is respondent smoker</th>
+          <th>Cigar variant that respondent have tried</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody"></tbody>
+    </table>
+    <script>
+      const form = document.getElementById("form");
+      const tBody = document.getElementById("tableBody");
+      const url = "https://st2lww-8888.csb.app/fariq/data";
+      async function getData() {
+        console.log("masuk..");
+        try {
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error(`Response status: ${response.status}`);
+          }
+          const json = await response.json();
+          console.log("ini adalah json", json.results);
+          const data = json.results.map((user) => {
+            const tr = document.createElement("tr");
+            if (user.name !== "") {
+              const td = document.createElement("td");
+              td.textContent = user.name;
+              tr.appendChild(td);
+            }
+            if (user.age !== "") {
+              const td = document.createElement("td");
+              td.textContent = user.age;
+              tr.appendChild(td);
+            }
+            if (user.gender !== "") {
+              const td = document.createElement("td");
+              td.textContent = user.gender;
+              tr.appendChild(td);
+            }
+            if (user.isSmoker !== "") {
+              const td = document.createElement("td");
+              td.textContent = user.isSmoker;
+              tr.appendChild(td);
+            }
+            if (user.cigarVariant !== "") {
+              const td = document.createElement("td");
+              td.textContent = user.cigarVariant.join("; ");
+              tr.appendChild(td);
+            }
+            console.log(user);
+            tBody.appendChild(tr);
+          });
+          // console.log(data);
+        } catch (error) {
+          console.error(error.message);
+        }
+      }
+      getData();
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const name = event.target.name.value;
+        const age = event.target.age.value;
+        const gender = event.target.gender.value;
+        const isSmoker = event.target.smoke.value;
+        const cigar = event.target.cigar;
+        let cigarVariant = [];
+        if (name === "") {
+          window.alert("mohon isi nama anda!!");
+          return;
+        }
+        if (age === "") {
+          window.alert("mohon isi umur anda!!");
+          return;
+        }
+        if (gender === "") {
+          window.alert("mohon isi jenis kelamin anda!!");
+          return;
+        }
+        if (isSmoker === "") {
+          window.alert("mohon jawab apakah anda seorang perokok?!");
+          return;
+        }
+        if (isSmoker === "Tidak") {
+        }
+        for (let i = 0; i < cigar.length; i++) {
+          if (cigar[i].checked) {
+            cigarVariant.push(cigar[i].value);
+          }
+        }
+        const formData = new URLSearchParams();
+        formData.append("name", name);
+        formData.append("age", age);
+        formData.append("gender", gender);
+        formData.append("isSmoker", isSmoker);
+        formData.append("cigarVariant", cigarVariant);
+
+        const response = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.alert("Terimakasih sudah mengisi survey ini :>");
+          getData();
+        } else {
+          window.alert("Maaf ada error :<");
+        }
+      });
+    </script>
+  </body>
+</html>

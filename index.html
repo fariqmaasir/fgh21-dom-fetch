@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FETCH</title>
+    <link rel="stylesheet" href="assets/css/styles.css" />
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #eeceb9;
+      }
+      .form-data {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        border: 5px solid #987d9a;
+        border-radius: 25px;
+        background-color: #bb9ab1;
+        padding: 150px;
+      }
+      form > div:first-child {
+        font-weight: 700;
+      }
+      form > div:nth-child(2) {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      form > div:nth-child(2) > input {
+        border: 3px solid black;
+        border-radius: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="background-form">
+      <form class="form-data" id="form-data">
+        <div>LOGIN</div>
+        <div>
+          <input type="email" name="email" placeholder="enter your email..." />
+          <input
+            type="password"
+            name="password"
+            placeholder="enter your password..."
+          />
+        </div>
+        <div>
+          <button type="submit">LOGIN</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("form-data");
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        const url = "https://st2lww-8888.csb.app/auth/login";
+        const email = event.target.email.value;
+        const password = event.target.password.value;
+
+        const formData = new URLSearchParams();
+        formData.append("email", email);
+        formData.append("password", password);
+
+        const response = await fetch(url, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        if (data.success) {
+          window.alert("Akun anda benar :>");
+          window.location.href = "survey.html";
+        } else {
+          window.alert("Akun anda salah :<");
+        }
+      });
+    </script>
+  </body>
+</html>
