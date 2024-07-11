@@ -106,8 +106,8 @@ form.addEventListener("submit", async (event) => {
   const data = await response.json();
   if (data.success) {
     window.alert("Terimakasih sudah mengisi survey ini :>");
+    getData();
   } else {
     window.alert("Maaf ada error :<");
   }
 });
-// getData();
