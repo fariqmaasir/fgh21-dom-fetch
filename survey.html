@@ -4,80 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Survey Form</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        background-color: #f4f4f9;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        height: 100vh;
-        margin: 0;
-      }
-      form {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        width: 300px;
-        display: flex;
-        flex-direction: column;
-        gap: 15px;
-        margin-bottom: 20px;
-      }
-      label {
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-      input[type="text"],
-      input[type="radio"],
-      input[type="checkbox"] {
-        margin-bottom: 10px;
-      }
-      input[type="text"] {
-        width: calc(100% - 20px);
-        padding: 10px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        margin-top: 5px;
-      }
-      input[type="radio"],
-      input[type="checkbox"] {
-        margin-right: 10px;
-      }
-      .radio-group,
-      .checkbox-group {
-        display: flex;
-        flex-direction: column;
-      }
-      .radio-group label,
-      .checkbox-group label {
-        font-weight: normal;
-      }
-      button {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 16px;
-      }
-      button:hover {
-        background-color: #0056b3;
-      }
-      table {
-        font-family: arial, sans-serif;
-        border-collapse: collapse;
-        width: 100%;
-      }
-      td,
-      th {
-        border: 1px solid #dddddd;
-        text-align: left;
-        padding: 8px;
-      }
-    </style>
+    <link rel="stylesheet" href="assets/css/styles.css" />
   </head>
   <body>
     <form id="form">
@@ -85,7 +12,7 @@
       <input name="name" type="text" />
 
       <label>Berapa Umur Anda?</label>
-      <input name="age" type="text" />
+      <input name="age" type="number" />
 
       <label>Apa Jenis Kelamin Anda?</label>
       <div class="radio-group">
@@ -169,19 +96,18 @@
       </thead>
       <tbody id="tableBody"></tbody>
     </table>
+    <script src="assets/js/index.js"></script>
     <script>
       const form = document.getElementById("form");
       const tBody = document.getElementById("tableBody");
       const url = "https://st2lww-8888.csb.app/fariq/data";
       async function getData() {
-        console.log("masuk..");
         try {
           const response = await fetch(url);
           if (!response.ok) {
             throw new Error(`Response status: ${response.status}`);
           }
           const json = await response.json();
-          console.log("ini adalah json", json.results);
           const data = json.results.map((user) => {
             const tr = document.createElement("tr");
             if (user.name !== "") {
@@ -209,15 +135,13 @@
               td.textContent = user.cigarVariant.join("; ");
               tr.appendChild(td);
             }
-            console.log(user);
             tBody.appendChild(tr);
           });
-          // console.log(data);
         } catch (error) {
           console.error(error.message);
         }
       }
-      getData();
+      // getData();
       form.addEventListener("submit", async (event) => {
         event.preventDefault();
         const name = event.target.name.value;
@@ -225,13 +149,30 @@
         const gender = event.target.gender.value;
         const isSmoker = event.target.smoke.value;
         const cigar = event.target.cigar;
-        let cigarVariant = [];
         if (name === "") {
           window.alert("mohon isi nama anda!!");
           return;
         }
+        if (/\d/.test(name)) {
+          window.alert("mohon isi nama anda dengan benar!!");
+          return;
+        }
         if (age === "") {
           window.alert("mohon isi umur anda!!");
+          return;
+        }
+        console.log(age);
+        if (age.length >= 3) {
+          window.alert("mohon isi umur dengan valid!!");
+          return;
+        }
+        if (
+          age.includes(".") ||
+          age.includes("e") ||
+          age.includes("-") ||
+          age[0] === "0"
+        ) {
+          window.alert("mohon isi umur dengan angka yang valid!!");
           return;
         }
         if (gender === "") {
@@ -242,13 +183,15 @@
           window.alert("mohon jawab apakah anda seorang perokok?!");
           return;
         }
-        if (isSmoker === "Tidak") {
-        }
+        // if (isSmoker === "Tidak") {
+        // }
+        let cigarData = [];
         for (let i = 0; i < cigar.length; i++) {
           if (cigar[i].checked) {
-            cigarVariant.push(cigar[i].value);
+            cigarData.push(cigar[i].value);
           }
         }
+        const cigarVariant = cigarData.join("; ");
         const formData = new URLSearchParams();
         formData.append("name", name);
         formData.append("age", age);
@@ -256,18 +199,18 @@
         formData.append("isSmoker", isSmoker);
         formData.append("cigarVariant", cigarVariant);
 
-        const response = await fetch(url, {
-          method: "POST",
-          body: formData,
-        });
-        const data = await response.json();
-        if (data.success) {
-          window.alert("Terimakasih sudah mengisi survey ini :>");
-          getData();
-        } else {
-          window.alert("Maaf ada error :<");
-        }
+        //   const response = await fetch(url, {
+        //     method: "POST",
+        //     body: formData,
+        //   });
+        //   const data = await response.json();
+        //   if (data.success) {
+        //     window.alert("Terimakasih sudah mengisi survey ini :>");
+        //   } else {
+        //     window.alert("Maaf ada error :<");
+        //   }
       });
+      getData();
     </script>
   </body>
 </html>
